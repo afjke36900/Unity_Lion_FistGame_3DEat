@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -55,13 +56,92 @@ public class GameManager : MonoBehaviour
         return total;
     }
 
+    /// <summary>
+    /// 時間倒數
+    /// </summary>
     private void CountTime()
     {
+        // 如果取得所有熱狗就跳出
+        if (countProp == countTotal) return;
+
+        // 遊戲時間 遞減 一禎的時間
         gameTime -= Time.deltaTime;
 
+        // 遊戲時間 = 數學.夾住(遊戲時間，最小值，最大值)
+        gameTime = Mathf.Clamp(gameTime, 0, 100);
+
+        // 更新倒數時間介面 Tostring("f小數點位數")
         textTime.text = "倒數時間 : " + gameTime.ToString("f2");
+
+        Lose();
+    }
+
+    /// <summary>
+    /// 取得道具 : 熱狗 - 更新數量與介面，高粱 - 扣兩秒並更新介面
+    /// </summary>
+    /// <param name="prop"></param>
+    public void GetProp(string prop)
+    {
+        if (prop == "熱狗")
+        {
+            countProp++;
+            textCount.text = "道具數量 : " + countProp + " / " + countTotal;
+        }
+        if (prop == "高粱")
+        {
+            gameTime -= 2;
+            textTime.text = "倒數時間 : " + gameTime.ToString("f2");
+        }
+
+        Win();
+    }
+
+    /// <summary>
+    /// 勝利 : 吃光所有熱狗
+    /// </summary>
+    private void Win()
+    {
+        if (countProp == countTotal)                        // 如果熱狗數量 = 熱狗總數
+        {
+            final.alpha = 1;                                // 顯示結束畫面
+            final.interactable = true;
+            final.blocksRaycasts = true;
+            textTitle.text = "恭喜你吃完所有熱狗!!";        // 更新結束畫面標題
+            FindObjectOfType<Player>().enabled = false;         // 取得玩家.啟動 = false
+        }
+    }
+
+    /// <summary>
+    /// 失敗 : 時間為零
+    /// </summary>
+    private void Lose()
+    {
+        if (gameTime == 0)
+        {
+            final.alpha = 1;
+            final.interactable = true;
+            final.blocksRaycasts = true;
+            textTitle.text = "挑戰失敗...Qwq ";
+            FindObjectOfType<Player>().enabled = false;         // 取得玩家.啟動 = false
+        }
     }
     #endregion
+
+    /// <summary>
+    /// 重新遊戲
+    /// </summary>
+    public void RePlay()
+    {
+        SceneManager.LoadScene("遊戲場景");
+    }
+
+    /// <summary>
+    /// 離開遊戲
+    /// </summary>
+    public void Quit()
+    {
+        Application.Quit(); // 應用程式.離開()
+    }
 
     #region 事件
     private void Start()
@@ -77,6 +157,5 @@ public class GameManager : MonoBehaviour
     {
         CountTime();
     }
-    #endregion
-
+    #endregion    
 }
