@@ -111,12 +111,12 @@ public class Player : MonoBehaviour
         // print("碰到的物件標籤為 : " + prop.name);
         if (prop.tag == "熱狗")
         {
-            aud.PlayOneShot(soundHotDog, 2);    // 喇叭.播放一次音效(音效片段，音量)
+            aud.PlayOneShot(soundHotDog, 1.2f);    // 喇叭.播放一次音效(音效片段，音量)
             Destroy(prop);                      // 刪除物件
         }
         else if (prop.tag == "高粱")
         {
-            aud.PlayOneShot(soundBeer, 2);
+            aud.PlayOneShot(soundBeer, 1.2f);
             Destroy(prop);
         }
 
